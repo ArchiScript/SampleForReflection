@@ -81,12 +81,12 @@ namespace SampleForReflection
             PropertyInfo propAge = assemType.GetProperty("SideCount");
             Console.WriteLine($"{propAge.Name} : {propAge.GetValue(obj1)}") ;
 
-            ConstructorInfo cons = assemType.GetConstructor(new Type[] { });
-            object persReflected = cons.Invoke(new object[] {"dkfj",4 });
+            /*ConstructorInfo cons = assemType.GetConstructor(new Type[] { });
+            object persReflected = cons.Invoke(new object[] {"dkfj",4 });*/
 
-
-            // Console.WriteLine($"invoked {persReflected}");
-            var privMeth = assemType.GetMethod("StrangeName", BindingFlags.NonPublic);
+            MethodInfo privMeth = assemType.GetMethod("StrangeName", BindingFlags.NonPublic | BindingFlags.Instance);
+           object strNameRes = privMeth.Invoke(obj1, new object[] {"Абдул" });
+            
             Console.WriteLine(privMeth.Name);
 
 
