@@ -24,15 +24,16 @@ namespace SampleForReflection
 
 
             //string path = @"G:\C#Projects\SampleForFileStream\SampleForFileStream\obj\Debug\netcoreapp3.1\SampleForFileStream.dll";
-
-            string path = Path.Combine("G:", "C#Projects", "SampleForFileStream", "SampleForFileStream", "obj", "Debug", "netcoreapp3.1", "SampleForFileStream.dll");
+            //string path = @"G:\C#Projects\SampleForSerialization\SampleForSerialization\bin\Debug\netcoreapp3.1\SampleForSerialization.dll"
+            //string path = Path.Combine("G:", "C#Projects", "SampleForFileStream", "SampleForFileStream", "obj", "Debug", "netcoreapp3.1", "SampleForFileStream.dll");
+            string path = Path.Combine("G:", "C#Projects", "SampleForSerialization", "SampleForSerialization", "obj", "Debug", "netcoreapp3.1", "SampleForSerialization.dll");
             Console.WriteLine(AssemblyName.GetAssemblyName(path));
-
+            
             //Console.WriteLine($"это текущая сборка и ее адрес {AppDomain.CurrentDomain.BaseDirectory}"); 
 
             Assembly assem = Assembly.LoadFrom(path);
             var assemTypes = assem.GetTypes();
-            var assemType = assem.GetType("SampleForFileStream.Person");
+            var assemType = assem.GetType("SampleForSerialization.DataSerializer");
             foreach (var item in assemType.GetMethods())
             {
                 Console.WriteLine(item.Name);
