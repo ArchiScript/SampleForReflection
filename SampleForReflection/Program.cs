@@ -9,7 +9,7 @@ namespace SampleForReflection
     {
         static void Main(string[] args)
         {
-
+            //================== примеры из практики ===============================
             //1
             Type myType = typeof(Figure);
             var myProperties = myType.GetProperties();
@@ -21,72 +21,113 @@ namespace SampleForReflection
 
 
             //3
-            var myType3 = Type.GetType("SampleForReflection.Figure", false, true);
+            // var myType3 = Type.GetType("SampleForReflection.Figure", false, true);
 
 
             //4
             //Display(triangle);
 
-            //string path = @"G:\C#Projects\SampleForFileStream\SampleForFileStream\obj\Debug\netcoreapp3.1\SampleForFileStream.dll";
-            //string path = @"G:\C#Projects\SampleForSerialization\SampleForSerialization\bin\Debug\netcoreapp3.1\SampleForSerialization.dll"
-            //string path = Path.Combine("G:", "C#Projects", "SampleForFileStream", "SampleForFileStream", "obj", "Debug", "netcoreapp3.1", "SampleForFileStream.dll");
+            //================== ЗАГРУЗКА СБОРКИ ИЗ ДРУГОЙ ПАПКИ ====================
+
 
             // ПУТЬ К ИСКОМОЙ СБОРКЕ
             string path = Path.Combine("G:", "C#Projects", "SampleForSerialization", "SampleForSerialization", "obj", "Debug", "netcoreapp3.1", "SampleForSerialization.dll");
             Console.WriteLine(AssemblyName.GetAssemblyName(path));
-            //Console.WriteLine($"это текущая сборка и ее адрес {AppDomain.CurrentDomain.BaseDirectory}"); 
+            //string assemName = AssemblyName.GetAssemblyName(path).ToString();
+            //Assembly assem = Assembly.Load(assemName);
+
 
             //ЗАГРУЗКА ИСКОМОЙ СБОРКИ
             Assembly assem = Assembly.LoadFrom(path);
 
+            //ОПРЕДЕЛЕНИЕ ТИПОВ
             var assemTypes = assem.GetTypes();
-            var assemType = assem.GetType("SampleForSerialization.Figure");
+            var figureType = assem.GetType("SampleForSerialization.Figure");
+            var personType = assem.GetType("SampleForSerialization.Person");
 
 
-            //ТИПЫ
+            //ВЫВОД ТИПОВ
             foreach (var type in assemTypes)
             {
                 Console.WriteLine(type);
             }
 
             //СВОЙСТВА
-            var props = assemType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var props = figureType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var prop in props)
             {
                 Console.WriteLine(prop.Name);
             }
             //МЕТОДЫ 
-            var methods = assemType.GetMethods(BindingFlags.Public | BindingFlags.Static);
-            foreach (var item in methods)
+            var methods = figureType.GetMethods(BindingFlags.Public | BindingFlags.Static);
+            foreach (var meth in methods)
             {
-                Console.WriteLine(item.Name);
+                Console.WriteLine(meth.Name);
             }
 
             //ПРИВАТНЫЕ МЕТОДЫ 
-            var privMeths = assemType.GetMethods(BindingFlags.NonPublic| BindingFlags.Instance);
+            var privMeths = personType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var prMeth in privMeths)
             {
                 Console.WriteLine(prMeth.Name);
             }
+            //КОНСТРУКТОРЫ
+            var constructors = personType.GetConstructors();
+            foreach (ConstructorInfo item in constructors)
+            {
+                Console.WriteLine(item.Name);
+            }
 
+
+
+
+            //================ЭКЗЕМПЛЯР КЛАССА FIGURE ==============================
             //ИНИЦИАЦИЯ 
-            object obj1 = Activator.CreateInstance(assemType);
+            object figureObjInst = Activator.CreateInstance(figureType);
 
-            //ПРИСВАИВАНИЕ СВОЙСТВАМ ЗНАЧЕНИЯ
-            PropertyInfo propName = assemType.GetProperty("Name");
-            propName.SetValue(obj1, "Восьмигранник", null);
-            Console.WriteLine($"{propName.Name} : {propName.GetValue(obj1)}");
+            //ТИП ИНИЦИИРОВАННОГО ОБЪЕКТА
+            Type figType = figureObjInst.GetType();
 
-            PropertyInfo propAge = assemType.GetProperty("SideCount");
-            Console.WriteLine($"{propAge.Name} : {propAge.GetValue(obj1)}");
+            //ПРИСВАИВАНИЕ ЗНАЧЕНИ1 СВОЙСТВАМ 
+            PropertyInfo propName = figureType.GetProperty("Name");
+            propName.SetValue(figureObjInst, "Восьмигранник");
+            Console.WriteLine($"\n {propName.Name} : {propName.GetValue(figureObjInst)}");
 
-            /*ConstructorInfo cons = assemType.GetConstructor(new Type[] { });
-            object persReflected = cons.Invoke(new object[] {"dkfj",4 });*/
+            PropertyInfo propAge = figureType.GetProperty("SideCount");
+            propAge.SetValue(figureObjInst, 3);
+            Console.WriteLine($" {propAge.Name} : {propAge.GetValue(figureObjInst)}");
 
-            MethodInfo privMeth = assemType.GetMethod("Cha", BindingFlags.NonPublic | BindingFlags.Instance);
-            object strNameRes = privMeth.Invoke(obj1, new object[] { "Абдул" });
+            //ОПРЕДЕЛЕНИЕ И ИНИЦИИРОВАНИЕ МЕТОДА С ПАРАМЕТРАМИ
+            MethodInfo multiplyMeth = figType.GetMethod("Multiply");
+            var resultMultiply = multiplyMeth.Invoke(figureObjInst, new object[] { 4, 4 });
+            Console.WriteLine($" Результат вызова метода с параметрами {resultMultiply}");
 
-            Console.WriteLine(privMeth.Name);
+
+            //=================ЭКЗЕМПЛЯР КЛАССА PERSON ==============================
+
+            //Type[] paramets = new Type[0];
+            ConstructorInfo constructor = personType.GetConstructor(new Type[] { typeof(string), typeof(int) });
+            object persReflected = constructor.Invoke(new object[] { "dfd", 8 });
+            Console.WriteLine(persReflected);
+           
+            PropertyInfo persName = personType.GetProperty("Name");
+            Console.WriteLine(persName.GetValue(persReflected));
+            /*  ConstructorInfo constructorInfo = personType.GetConstructor(new Type[] { });
+              //object persObjInst = Activator.CreateInstance(personType);
+              object persReflected = constructorInfo.Invoke(new object[] { "dfd", 8 });*/
+
+
+
+
+
+
+            /* ConstructorInfo cons = personType.GetConstructor(new Type[] { });
+             object persReflected = cons.Invoke(new object[] { });
+
+             MethodInfo privMeth = personType.GetMethod("StrangeName", BindingFlags.NonPublic | BindingFlags.Instance);
+             object strNameRes = privMeth.Invoke(persReflected, new object[] { "Абдул" });
+
+             Console.WriteLine(privMeth.Name);*/
 
 
             /*Type type4 = Type.GetType("SampleForSerialization.Figure", false, true);
