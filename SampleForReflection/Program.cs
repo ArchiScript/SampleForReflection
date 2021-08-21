@@ -66,18 +66,15 @@ namespace SampleForReflection
             }
 
             //ПРИВАТНЫЕ МЕТОДЫ 
-            var privMeths = personType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+            var privMeths = figureType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var prMeth in privMeths)
             {
                 Console.WriteLine(prMeth.Name);
             }
             //КОНСТРУКТОРЫ
             var constructors = personType.GetConstructors();
-            foreach (ConstructorInfo item in constructors)
-            {
-                Console.WriteLine(item.Name);
-            }
-
+            
+            Console.WriteLine(constructors[0]);
 
 
 
@@ -94,7 +91,7 @@ namespace SampleForReflection
             Console.WriteLine($"\n {propName.Name} : {propName.GetValue(figureObjInst)}");
 
             PropertyInfo propAge = figureType.GetProperty("SideCount");
-            propAge.SetValue(figureObjInst, 3);
+            propAge.SetValue(figureObjInst, 8);
             Console.WriteLine($" {propAge.Name} : {propAge.GetValue(figureObjInst)}");
 
             //ОПРЕДЕЛЕНИЕ И ИНИЦИИРОВАНИЕ МЕТОДА С ПАРАМЕТРАМИ
@@ -102,44 +99,24 @@ namespace SampleForReflection
             var resultMultiply = multiplyMeth.Invoke(figureObjInst, new object[] { 4, 4 });
             Console.WriteLine($" Результат вызова метода с параметрами {resultMultiply}");
 
-
+            MethodInfo privMethodFigure = figType.GetMethod("ChangeName",BindingFlags.NonPublic| BindingFlags.Instance);
+            var privResult = privMethodFigure.Invoke(figureObjInst, new object[] { "Петр" });
+            Console.WriteLine($"\n Вызов приватного метода с параметром:  {privResult}");
+            
+            
             //=================ЭКЗЕМПЛЯР КЛАССА PERSON ==============================
 
-            //Type[] paramets = new Type[0];
+            //ОПРЕДЕЛЕНИЕ КОНСТРУКТОРА И ВЫЗОВ С ПАРАМЕТРАМИ
             ConstructorInfo constructor = personType.GetConstructor(new Type[] { typeof(string), typeof(int) });
-            object persReflected = constructor.Invoke(new object[] { "dfd", 8 });
-            Console.WriteLine(persReflected);
+            object persReflected = constructor.Invoke(new object[] { "Василий", 12 });
+            
            
             PropertyInfo persName = personType.GetProperty("Name");
-            Console.WriteLine(persName.GetValue(persReflected));
-            /*  ConstructorInfo constructorInfo = personType.GetConstructor(new Type[] { });
-              //object persObjInst = Activator.CreateInstance(personType);
-              object persReflected = constructorInfo.Invoke(new object[] { "dfd", 8 });*/
-
-
-
-
-
-
-            /* ConstructorInfo cons = personType.GetConstructor(new Type[] { });
-             object persReflected = cons.Invoke(new object[] { });
-
-             MethodInfo privMeth = personType.GetMethod("StrangeName", BindingFlags.NonPublic | BindingFlags.Instance);
-             object strNameRes = privMeth.Invoke(persReflected, new object[] { "Абдул" });
-
-             Console.WriteLine(privMeth.Name);*/
-
-
-            /*Type type4 = Type.GetType("SampleForSerialization.Figure", false, true);
-            Console.WriteLine(type4.FullName);*/
-
-
-
-
-
-
-
-
+            PropertyInfo persAge = personType.GetProperty("Age");
+            Console.WriteLine($"\n Свойства изменены с помощью вызова конструктора класса: \n" +
+                $"{persName.Name}: {persName.GetValue(persReflected)} " +
+                $"{persAge.Name}: {persAge.GetValue(persReflected)}");
+            
 
 
         }
