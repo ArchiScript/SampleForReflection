@@ -39,11 +39,10 @@ namespace SampleForReflection
             //ЗАГРУЗКА ИСКОМОЙ СБОРКИ
             Assembly assem = Assembly.LoadFrom(path);
 
-            
             var assemTypes = assem.GetTypes();
-            var assemType = assem.GetType("SampleForSerialization.Person");
+            var assemType = assem.GetType("SampleForSerialization.Figure");
 
-            
+
             //ТИПЫ
             foreach (var type in assemTypes)
             {
@@ -64,7 +63,7 @@ namespace SampleForReflection
             }
 
             //ПРИВАТНЫЕ МЕТОДЫ 
-            var privMeths = assemType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+            var privMeths = assemType.GetMethods(BindingFlags.NonPublic| BindingFlags.Instance);
             foreach (var prMeth in privMeths)
             {
                 Console.WriteLine(prMeth.Name);
@@ -79,21 +78,21 @@ namespace SampleForReflection
             Console.WriteLine($"{propName.Name} : {propName.GetValue(obj1)}");
 
             PropertyInfo propAge = assemType.GetProperty("SideCount");
-            Console.WriteLine($"{propAge.Name} : {propAge.GetValue(obj1)}") ;
+            Console.WriteLine($"{propAge.Name} : {propAge.GetValue(obj1)}");
 
             /*ConstructorInfo cons = assemType.GetConstructor(new Type[] { });
             object persReflected = cons.Invoke(new object[] {"dkfj",4 });*/
 
-            MethodInfo privMeth = assemType.GetMethod("StrangeName", BindingFlags.NonPublic | BindingFlags.Instance);
-           object strNameRes = privMeth.Invoke(obj1, new object[] {"Абдул" });
-            
+            MethodInfo privMeth = assemType.GetMethod("Cha", BindingFlags.NonPublic | BindingFlags.Instance);
+            object strNameRes = privMeth.Invoke(obj1, new object[] { "Абдул" });
+
             Console.WriteLine(privMeth.Name);
 
 
             /*Type type4 = Type.GetType("SampleForSerialization.Figure", false, true);
             Console.WriteLine(type4.FullName);*/
-            
-           
+
+
 
 
 
